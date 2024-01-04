@@ -83,7 +83,7 @@ router.post("", async function (req, res, next) {
  */
 
 router.put("/:id", async function (req, res, next) {
-  if (req.body === undefined || "amt" in req.body) throw new BadRequestError();
+  if (req.body === undefined || "id" in req.body) throw new BadRequestError();
 
   const { amt } = req.body;
   const id = req.params.id;
