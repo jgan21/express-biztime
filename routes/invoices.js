@@ -39,6 +39,9 @@ router.get("/:id", async function (req, res, next) {
         WHERE id = $1`, [id]);
   const invoice = iResults.rows[0];
 
+  if (!invoice) throw new NotFoundError(
+    `No matching invoice found: ${id}`);
+
   const cResults = await db.query(
     `SELECT code, name, description
         FROM companies
