@@ -27,7 +27,10 @@ router.get("", async function (req, res, next) {
 router.get("/:code", async function (req, res, next) {
   const code = await req.params.code;
   const results = await db.query(
-    `SELECT code, name, description FROM companies WHERE id = $1`, [code]);
+    `SELECT code, name, description
+        FROM companies
+        WHERE code = $1`, [code]);
+
   const company = results.rows[0];
 
   if (company === undefined) throw new NotFoundError(
