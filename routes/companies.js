@@ -13,7 +13,9 @@ const db = require("../db");
 */
 
 router.get("", async function (req, res, next) {
-  const results = await db.query("SELECT code, name, description FROM companies");
+  const results = await db.query(
+    `SELECT code, name, description
+        FROM companies`);
   const companies = results.rows;
 
   return res.json({ companies });
