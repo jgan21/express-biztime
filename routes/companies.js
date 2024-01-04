@@ -35,7 +35,7 @@ router.get("/:code", async function (req, res, next) {
 
   const company = results.rows[0];
 
-  if (company === undefined) throw new NotFoundError(
+  if (!company) throw new NotFoundError(
     `No matching company: ${code}`);
 
   return res.json({ company });
