@@ -12,7 +12,7 @@ const db = require("../db");
  *  Return info on invoices: {invoices: [{id, comp_code}, ...]}
 */
 
-router.get("", async function(req, res, next){
+router.get("", async function (req, res, next) {
   const results = await db.query(
     `SELECT id, comp_code
         FROM invoices`
@@ -28,7 +28,7 @@ router.get("", async function(req, res, next){
  * company: {code, name, description}}
  */
 
-router.get("/:id", async function(req, res, next){
+router.get("/:id", async function (req, res, next) {
   const id = req.params.id;
   //TODO: currently also getting comp_code,
   //see if we could join the tables instead
@@ -46,8 +46,30 @@ router.get("/:id", async function(req, res, next){
   const company = cResults.rows[0];
 
   invoice.company = company;
-  return res.json({ invoice })
+  return res.json({ invoice });
 });
 
+/** POST /invoices -- Adds an invoice
+ *  Accepts JSON: {comp_code, amt}
+ *  Returns: {invoice: {id, comp_code, amt, paid, add_date, paid_date}}
+ *  Returns 400 if request body empty
+ */
+
+router.post("", async function (req, res, next) {
+  if (req.body === undefined) throw new BadRequestError();
+
+  const { comp_code, amt } = req.body;
+
+  const iResult = await db.query(
+    `INSERT INTO invoices (comp_code, amt)
+        VALUES ($1, $2)
+        RETURNING id, comp_code, amt, paid, add_date, paid_date`,
+    [comp_code, amt]
+  );
+
+  const invoice = iResult.rows[0];
+
+  return res.status(201).json({ invoice });
+});
 
 module.exports = router;
