@@ -34,6 +34,7 @@ router.get("/:code", async function (req, res, next) {
 /** POST /companies - Create a new company
  *  Accepts JSON: {code, name, description}
  *  Returns obj of new company: {company: {code, name, description}}
+ *  Returns 400 if no body data provided
  */
 
 router.post("", async function (req, res, next) {
@@ -51,3 +52,33 @@ router.post("", async function (req, res, next) {
 
   return res.status(201).json({ company });
 });
+
+/** PUT /companies/[code] - Edit existing company.
+ *  Accepts JSON: {name, description}
+ *  Returns updated company object: {company: {code, name, description}}
+ *  Returns 404 if company not found
+ *  Returns 400 if no body data provided
+ */
+
+router.put("/:code", async function (req, res, next) {
+  if (req.body === undefined || "code" in req.body) throw new BadRequestError();
+
+  const { name, description } = req.body;
+  const code = req.params.code;
+
+  const result = await db.query(
+    `UPDATE companies
+        SET name=$1
+            description=$2
+        WHERE code=$3
+        RETURNING code, name, description`,
+    [name, description, code]
+  );
+
+  const company = result.rows[0];
+
+  if (!company) throw new NotFoundError(`${code}: Not Found`);
+
+  return res.json({ company });
+});
+
