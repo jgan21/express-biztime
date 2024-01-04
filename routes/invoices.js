@@ -72,4 +72,32 @@ router.post("", async function (req, res, next) {
   return res.status(201).json({ invoice });
 });
 
+/** PUT /invoices/:id -- Updates an invoice
+ *  Accepts JSON: {amt}
+ *  Returns: {invoice: {id, comp_code, amt, paid, add_date, paid_date}}
+ *  Returns 400 if request body empty
+ *  Returns 404 if invoice not found
+ */
+
+router.put("/:id", async function (req, res, next) {
+  if (req.body === undefined || "amt" in req.body) throw new BadRequestError();
+
+  const { amt } = req.body;
+  const id = req.params.id;
+
+  const iResult = await db.query(
+    `UPDATE invoices
+        SET amt=$1
+        WHERE id=$2
+        RETURNING id, comp_code, amt, paid, add_date, paid_date`,
+    [amt, id]
+  );
+
+  const invoice = iResult.rows[0];
+
+  if (!invoice) throw new NotFoundError(`No matching invoice found: ${id}`);
+
+  return res.json({ invoice });
+});
+
 module.exports = router;
