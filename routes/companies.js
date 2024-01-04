@@ -8,7 +8,9 @@ const { NotFoundError, BadRequestError } = require("../expressError");
 const router = new express.Router();
 const db = require("../db");
 
-/** GET / - returns `{companies: [name, description]}`*/
+/** GET /companies - list all of the companies in the db
+ * returns `{companies: [code, name, description], ...}`
+*/
 
 router.get("", async function (req, res, next) {
   const results = await db.query("SELECT code, name, description FROM companies");
@@ -17,7 +19,10 @@ router.get("", async function (req, res, next) {
   return res.json({ companies });
 });
 
-/** GET /:code - return specific company. */
+/** GET /:code - return specific company.
+ * Returns of company: {company: {code, name, description}}
+ * Returns 404 if company not found
+*/
 
 router.get("/:code", async function (req, res, next) {
   const code = await req.params.code;
@@ -77,8 +82,30 @@ router.put("/:code", async function (req, res, next) {
 
   const company = result.rows[0];
 
-  if (!company) throw new NotFoundError(`${code}: Not Found`);
+  if (!company) throw new NotFoundError(`No matching company: ${code}`);
 
   return res.json({ company });
 });
 
+/**DELETE /companies/[code] - Deletes company.
+ *
+ * Returns {status: "deleted"}
+ * Return 404 if company cannot be found.
+ */
+
+router.delete("/:code", async function (req, res, next) {
+  const code = req.params.code;
+
+  const results = await db.query(
+    `DELETE FROM companies
+        WHERE code = $1
+        RETURNING code`, [code]
+  );
+  const company = results.rows[0];
+
+  if (!company) throw new NotFoundError(`No matching company: ${code}`);
+
+  return res.json({ status: "deleted" });
+});
+
+module.exports = router;
