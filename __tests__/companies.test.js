@@ -12,7 +12,7 @@ afterAll(async function () {
   await db.end();
 });
 
-describe("GET /companies", function () {
+describe("GET /companies Tests", function () {
   test("Respond with array of companies", async function () {
     const response = await request(app).get("/companies");
     expect(response.body).toEqual({
@@ -41,5 +41,47 @@ describe("GET /companies/:id Tests", function () {
   test("Throw a 404 error for invalid company code", async function () {
     const resp = await request(app).get("/companies/warbler");
     expect(resp.status).toEqual(404);
+  });
+});
+
+describe("PUT /companies/:id Tests", function () {
+
+  test("Update company", async function () {
+    const response = await request(app)
+      .put("/companies/apple")
+      .send({ name: "AppleEdit", description: "NewDescrip" });
+
+    expect(response.body).toEqual(
+      {
+        company: {
+          code: "apple",
+          name: "AppleEdit",
+          description: "NewDescrip",
+        },
+      });
+  });
+
+  test("Return 400 for empty request body", async function () {
+    const response = await request(app)
+      .put("/companies/apple")
+      .send();
+
+    expect(response.status).toEqual(400);
+  });
+
+  test("Return 404 for no-such-comp", async function () {
+    const response = await request(app)
+      .put("/companies/blargh")
+      .send({ name: "Blargh" });
+
+    expect(response.status).toEqual(404);
+  });
+
+  test("Return 500 for missing data", async function () {
+    const response = await request(app)
+      .put("/companies/apple")
+      .send({});
+
+    expect(response.status).toEqual(500);
   });
 });
