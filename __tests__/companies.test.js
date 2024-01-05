@@ -44,6 +44,40 @@ describe("GET /companies/:id Tests", function () {
   });
 });
 
+describe("POST /", function () {
+
+  test("Add company", async function () {
+    const response = await request(app)
+      .post("/companies")
+      .send({ name: "TacoTime", description: "Yum!" });
+
+    expect(response.body).toEqual(
+      {
+        company: {
+          code: "tacotime",
+          name: "TacoTime",
+          description: "Yum!",
+        },
+      });
+  });
+
+  test("Return 400 for empty request body", async function () {
+    const response = await request(app)
+      .post("/companies")
+      .send();
+
+    expect(response.status).toEqual(400);
+  });
+
+  test("Return 500 for conflict", async function () {
+    const response = await request(app)
+      .post("/companies")
+      .send({ name: "Apple", description: "Huh?" });
+
+    expect(response.status).toEqual(500);
+  });
+});
+
 describe("PUT /companies/:id Tests", function () {
 
   test("Update company", async function () {
