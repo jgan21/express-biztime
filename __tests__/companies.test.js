@@ -25,26 +25,27 @@ describe("GET /companies", function () {
 });
 
 describe("GET /companies/:id Tests", function () {
-  test("Return correct company object", async function () {
-    console.log("testCompany in GET /companies/:id", testCompany);
-    console.log("testInvoice1 in GET /companies/:id", testInvoice1);
-    console.log("testInvoice2 in GET /companies/:id", testInvoice2);
-    console.log("testInvoice3 in GET /companies/:id", testInvoice3);
-
-    const resp = await request(app).get(`/companies/${testCompany.code}`);
-    expect(resp.body).toEqual({
-      company: {
-        code: testCompany["code"],
-        name: testCompany["name"],
-        description: testCompany["description"],
-        invoices: [testInvoice1.id, testInvoice2.id, testInvoice3.id]
-      }
-    });
+  test("Return company info", async function () {
+    const response = await request(app).get("/companies/apple");
+    expect(response.body).toEqual(
+      {
+        company: {
+          code: "apple",
+          name: "Apple",
+          description: "Maker of OSX.",
+          invoices: [1, 2],
+        },
+      });
   });
 
-  test("Throw a 404 error for invalid company code", async function () {
-    const resp = await request(app).get("/companies/warbler");
-    expect(resp.status).toEqual(404);
+  test("Return 404 for no-such-company", async function () {
+    const response = await request(app).get("/companies/blargh");
+    expect(response.status).toEqual(404);
   });
+});
+
+test("Throw a 404 error for invalid company code", async function () {
+  const resp = await request(app).get("/companies/warbler");
+  expect(resp.status).toEqual(404);
 });
 
