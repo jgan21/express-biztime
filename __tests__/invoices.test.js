@@ -84,3 +84,48 @@ describe("POST /invoices Test", function () {
   });
 });
 
+describe("PUT /invoices/:id Test", function () {
+
+  test("It should update an invoice", async function () {
+    const response = await request(app)
+      .put("/invoices/1")
+      .send({ amt: 1000, paid: false });
+
+    expect(response.body).toEqual(
+      {
+        invoice: {
+          id: 1,
+          comp_code: 'apple',
+          paid: false,
+          amt: '1000.00',
+          add_date: expect.any(String),
+          paid_date: null,
+        }
+      });
+  });
+
+  test("It should return 400 for empty request body", async function () {
+    const response = await request(app)
+      .put("/invoices/1")
+      .send();
+
+    expect(response.status).toEqual(400);
+  });
+
+  test("It should return 404 for no-such-invoice", async function () {
+    const response = await request(app)
+      .put("/invoices/9999")
+      .send({ amt: '1000.00' });
+
+    expect(response.status).toEqual(404);
+  });
+
+  test("It should return 500 for missing data", async function () {
+    const response = await request(app)
+      .put("/invoices/1")
+      .send({});
+
+    expect(response.status).toEqual(500);
+  });
+});
+
