@@ -54,3 +54,33 @@ describe("GET /invoices/:id", function () {
     expect(response.status).toEqual(404);
   });
 });
+
+describe("POST /invoices Test", function () {
+
+  test("Should add invoice", async function () {
+    const response = await request(app)
+      .post("/invoices")
+      .send({ amt: 400, comp_code: 'ibm' });
+
+    expect(response.body).toEqual(
+      {
+        invoice: {
+          id: 4,
+          comp_code: "ibm",
+          amt: '400.00',
+          add_date: expect.any(String),
+          paid: false,
+          paid_date: null,
+        }
+      });
+  });
+
+  test("Return 400 for empty request body", async function () {
+    const response = await request(app)
+      .post("/invoices")
+      .send();
+
+    expect(response.status).toEqual(400);
+  });
+});
+
