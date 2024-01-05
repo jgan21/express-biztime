@@ -44,19 +44,19 @@ describe("GET /companies/:id Tests", function () {
   });
 });
 
-describe("POST /", function () {
+describe("POST /companies Tests", function () {
 
   test("Add company", async function () {
     const response = await request(app)
       .post("/companies")
-      .send({ name: "TacoTime", description: "Yum!" });
+      .send({ code: "tacotime", name: "TacoTime", description: "Yum!" });
 
     expect(response.body).toEqual(
       {
         company: {
           code: "tacotime",
           name: "TacoTime",
-          description: "Yum!",
+          description: "Yum!"
         },
       });
   });
