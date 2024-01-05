@@ -24,11 +24,23 @@ const iResults = await db.query(`
     VALUES ('apple', 100, FALSE, NULL),
            ('apple', 200, FALSE, NULL),
            ('apple', 300, TRUE, '2018-01-01'),
-           ('ibm', 400, FALSE, NULL);
+           ('ibm', 400, FALSE, NULL)
     RETURNING comp_code, amt, paid, paid_date`);
   testInvoice1 = iResults.rows[0];
   testInvoice2 = iResults.rows[1];
   testInvoice3 = iResults.rows[2];
   testInvoice4 = iResults.rows[3];
 
+});
+
+describe("GET /companies", function(){
+  test("Get all companies", async function(){
+    const resp = await request(app).get("/companies");
+    expect(resp.body).toEqual({companies: [testCompany, testCompany2]})
+    expect(resp.status).toEqual(200);
+  });
+});
+
+afterAll(async function () {
+  await db.end();
 });
