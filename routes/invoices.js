@@ -51,17 +51,17 @@ router.get("/:id", async function (req, res, next) {
     `No matching invoice found: ${id}`);
 
   const invoice = {
-    id : data.id,
-    amt : data.amt,
-    paid : data.paid,
-    add_date : data.add_date,
-    paid_date : data.paid_date,
+    id: data.id,
+    amt: data.amt,
+    paid: data.paid,
+    add_date: data.add_date,
+    paid_date: data.paid_date,
     company: {
-      code : data.code,
-      name : data.name,
-      description : data.description,
+      code: data.code,
+      name: data.name,
+      description: data.description,
     }
-  }
+  };
 
   return res.json({ invoice });
 });
@@ -118,11 +118,13 @@ router.put("/:id", async function (req, res, next) {
 });
 
 /** DELETE /invoices/:id -- deletes an invoice.
- * Returns: 404 if invoice not found.
  * Returns {status: "deleted"}
+ * Returns: 404 if invoice not found.
+ * (GENERALLY BETTER TO SHOW POSITIVE RESULT BEFORE ERROR CODES)
+ * (PEDANTIC Update: Technically JS throws an error not returns)
  */
 
-router.delete("/:id", async function(req, res, next){
+router.delete("/:id", async function (req, res, next) {
   const id = req.params.id;
 
   const results = await db.query(
