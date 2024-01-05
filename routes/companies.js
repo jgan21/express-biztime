@@ -22,7 +22,8 @@ router.get("", async function (req, res, next) {
 });
 
 /** GET /:code - return specific company.
- * Returns of company: {company: {code, name, description}}
+ * Returns obj of company:
+ *     {company: {code, name, description, invoices: [id,...]}}
  * Returns 404 if company not found
 */
 
