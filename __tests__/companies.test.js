@@ -3,7 +3,7 @@
 const request = require("supertest");
 const app = require("../app");
 const db = require("../db");
-const { createData } = require("../__tests__/_test-setup");
+const { createData } = require("../_test-setup");
 
 
 beforeEach(createData);
@@ -17,8 +17,8 @@ describe("GET /companies", function () {
     const response = await request(app).get("/companies");
     expect(response.body).toEqual({
       companies: [
-        { code: "apple", name: "Apple" },
-        { code: "ibm", name: "IBM" },
+        { code: "apple", name: "Apple", description: "Maker of OSX." },
+        { code: "ibm", name: "IBM", description: "Big blue." },
       ],
     });
   });
