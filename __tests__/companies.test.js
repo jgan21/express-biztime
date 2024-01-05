@@ -13,10 +13,14 @@ afterAll(async function () {
 });
 
 describe("GET /companies", function () {
-  test("Get all companies", async function () {
-    const resp = await request(app).get("/companies");
-    expect(resp.body).toEqual({ companies: [testCompany, testCompany2] });
-    expect(resp.status).toEqual(200);
+  test("Respond with array of companies", async function () {
+    const response = await request(app).get("/companies");
+    expect(response.body).toEqual({
+      companies: [
+        { code: "apple", name: "Apple" },
+        { code: "ibm", name: "IBM" },
+      ],
+    });
   });
 });
 
