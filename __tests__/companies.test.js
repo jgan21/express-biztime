@@ -38,14 +38,8 @@ describe("GET /companies/:id Tests", function () {
       });
   });
 
-  test("Return 404 for no-such-company", async function () {
-    const response = await request(app).get("/companies/blargh");
-    expect(response.status).toEqual(404);
+  test("Throw a 404 error for invalid company code", async function () {
+    const resp = await request(app).get("/companies/warbler");
+    expect(resp.status).toEqual(404);
   });
 });
-
-test("Throw a 404 error for invalid company code", async function () {
-  const resp = await request(app).get("/companies/warbler");
-  expect(resp.status).toEqual(404);
-});
-
