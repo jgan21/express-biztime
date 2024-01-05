@@ -85,3 +85,20 @@ describe("PUT /companies/:id Tests", function () {
     expect(response.status).toEqual(500);
   });
 });
+
+describe("DELETE /", function () {
+
+  test("Delete company", async function () {
+    const response = await request(app)
+      .delete("/companies/apple");
+
+    expect(response.body).toEqual({ "status": "deleted" });
+  });
+
+  test("Return 404 for no-such-comp", async function () {
+    const response = await request(app)
+      .delete("/companies/blargh");
+
+    expect(response.status).toEqual(404);
+  });
+});
