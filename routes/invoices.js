@@ -30,25 +30,39 @@ router.get("", async function (req, res, next) {
 
 router.get("/:id", async function (req, res, next) {
   const id = req.params.id;
-  //TODO: currently also getting comp_code,
-  //see if we could join the tables instead
 
   const iResults = await db.query(
-    `SELECT id, amt, paid, add_date, paid_date, comp_code
-        FROM invoices
-        WHERE id = $1`, [id]);
-  const invoice = iResults.rows[0];
+    `SELECT i.id,
+            i.amt,
+            i.paid,
+            i.add_date,
+            i.paid_date,
+            c.code,
+            c.name,
+            c.description
+      FROM invoices AS i
+        JOIN companies AS c ON (i.comp_code = c.code)
+      WHERE id = $1`, [id]
+  );
 
-  if (!invoice) throw new NotFoundError(
+  const data = iResults.rows[0];
+
+  if (!data) throw new NotFoundError(
     `No matching invoice found: ${id}`);
 
-  const cResults = await db.query(
-    `SELECT code, name, description
-        FROM companies
-        WHERE code = $1`, [invoice.comp_code]);
-  const company = cResults.rows[0];
+  const invoice = {
+    id : data.id,
+    amt : data.amt,
+    paid : data.paid,
+    add_date : data.add_date,
+    paid_date : data.paid_date,
+    company: {
+      code : data.code,
+      name : data.name,
+      description : data.description,
+    }
+  }
 
-  invoice.company = company;
   return res.json({ invoice });
 });
 
