@@ -129,3 +129,19 @@ describe("PUT /invoices/:id Test", function () {
   });
 });
 
+describe("DELETE /", function () {
+
+  test("It should delete invoice", async function () {
+    const response = await request(app)
+      .delete("/invoices/1");
+
+    expect(response.body).toEqual({ status: "deleted" });
+  });
+
+  test("It should return 404 for no-such-invoices", async function () {
+    const response = await request(app)
+      .delete("/invoices/0");
+
+    expect(response.status).toEqual(404);
+  });
+});
